@@ -1,13 +1,9 @@
-import { v4 as uuid} from "uuid"
+import{v4 as uuid} from 'uuid'
 
-interface GameInfo {
-    whitePlayer: string
-    blackPlayer: string
-    gameState: object
-}
-export default class GameManager {
+
+class GamesService {
     waitingQueue: string[]
-    activeGames: Map<string, GameInfo>
+    activeGames: Map<string, GameInstance>
 
     constructor() {
         this.waitingQueue = []
@@ -28,11 +24,13 @@ export default class GameManager {
         return this.activeGames.get(uuid)
     }
 
-    getGameByPlayer(playerUuid: string): GameInfo | undefined {   
-        for (const [gameUuid, gameInfo] of this.activeGames.entries()) {
-            if(gameInfo.blackPlayer === playerUuid || gameInfo.whitePlayer === playerUuid) {
-                return gameInfo
+    getGameByPlayer(playerUuid: string): GameInstance | undefined {   
+        for (const [gameUuid, game] of this.activeGames.entries()) {
+            if(game.blackPlayer === playerUuid || game.whitePlayer === playerUuid) {
+                return game
             }
         }
     }
 }
+const gamesService = new GamesService();
+export default gamesService

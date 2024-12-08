@@ -1,2 +1,5 @@
-import { Server as SocketIOServer } from 'socket.io'
+import express from 'express';
 
+if (require.main === module) {
+    
+}
