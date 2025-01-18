@@ -1,12 +1,14 @@
 import { Socket } from "socket.io";
 import { GameOutcome, GameOutcomeReason, Player } from "./types";
 import { ChessGame } from "@evanboerchers/chess-core"
-import { Move, PieceColour } from "@evanboerchers/chess-core/dist/chess.types";
+import { Move, PieceColour } from "@evanboerchers/chess-core";
 
 export class GameInstance {
+    
     blackPlayer: Player
     whitePlayer: Player
     game: ChessGame
+
     constructor(blackPlayer: Player, whitePlayer: Player) {
         this.whitePlayer = whitePlayer
         this.blackPlayer = blackPlayer
@@ -25,9 +27,8 @@ export class GameInstance {
 
     initSocketHandlers(colour: PieceColour, socket: Socket) {
         socket.on("makeMove",  (move: Move) => this.handleMove(colour, move))
-        socket.on("makeMove",  (move: Move) => this.handleMove(colour, move))
-        socket.on("resign",  () => {})
-        socket.on("offerDraw",  () => {})
+        socket.on("resign",  () => this.handleResign(colour))
+        socket.on("offerDraw",  () => this.handleDrawOffered(colour))
     }
 
     handleMove(colour: PieceColour, move: Move) {

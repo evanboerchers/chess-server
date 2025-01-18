@@ -8,18 +8,18 @@ class QueueService {
     }
 
     addToQueue(player: Player): void {
-        if (!this.queue.some(p => p.id === player.id)) {
+        if (!this.queue.some(p => p.name === player.name)) {
             this.queue.push(player);
         }
     }
 
-    findMatch(): Player[] | null {
-        if (this.queue.length < 2) {
-            return null;
-        }
-        const matchedPlayers = this.queue.splice(0, 2);
-        GamesService
-    }
+    // findMatch(): Player[] | null {
+    //     if (this.queue.length < 2) {
+    //         return null;
+    //     }
+    //     const matchedPlayers = this.queue.splice(0, 2);
+    //     GamesService
+    // }
 }   
 
 const queueService = new QueueService();

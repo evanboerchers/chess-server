@@ -6,6 +6,10 @@ export interface Player {
     socket: Socket
 }
 
+export interface GameInfo {
+    
+}
+
 export enum GameOutcomeReason {
     CHECKMATE = "checkmate",
     RESIGN = "resign",

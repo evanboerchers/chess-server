@@ -1,4 +1,5 @@
 import{v4 as uuid} from 'uuid'
+import { GameInstance } from './GameInstance';
 
 
 class GamesService {
@@ -10,23 +11,19 @@ class GamesService {
         this.activeGames = new Map();
     }
 
-    startGame(whitePlayer: string, blackPlayer: string) {
-        const game: GameInfo = {
-            whitePlayer,
-            blackPlayer,
-            gameState: {}
-        } 
-        this.activeGames.set(uuid(), game)
-        return game
-    }
+    // startGame(whitePlayer: string, blackPlayer: string) {
+    //     const game: GameInstance = new GameInstance()
+    //     this.activeGames.set(uuid(), game)
+    //     return game
+    // }
 
-    getGame(uuid: string): GameInfo | undefined{
+    getGame(uuid: string): GameInstance | undefined{
         return this.activeGames.get(uuid)
     }
 
     getGameByPlayer(playerUuid: string): GameInstance | undefined {   
         for (const [gameUuid, game] of this.activeGames.entries()) {
-            if(game.blackPlayer === playerUuid || game.whitePlayer === playerUuid) {
+            if(game.blackPlayer.name === playerUuid || game.whitePlayer.name === playerUuid) {
                 return game
             }
         }

@@ -1,7 +1,7 @@
 import { GameInstance } from './GameInstance';
 import { Socket } from 'socket.io';
 import { ChessGame } from '@evanboerchers/chess-core';
-import { Move, PieceColour } from '@evanboerchers/chess-core/dist/chess.types';
+import { Move, PieceColour, PieceType } from '@evanboerchers/chess-core';
 import { Player } from './types';
 import { GameOutcome, GameOutcomeReason } from './types';
 
@@ -14,7 +14,6 @@ describe('GameInstance', () => {
   let chessGame: ChessGame;
 
   beforeEach(() => {
-    // Create mock sockets
     whiteSocket = {
       emit: jest.fn(),
       on: jest.fn(),
@@ -27,7 +26,6 @@ describe('GameInstance', () => {
       removeAllListeners: jest.fn()
     } as unknown as jest.Mocked<Socket>;
 
-    // Create mock players
     whitePlayer = { 
       socket: whiteSocket,
       name: 'WhitePlayer'
@@ -38,9 +36,7 @@ describe('GameInstance', () => {
       name: 'BlackPlayer'
     };
 
-    // Mock ChessGame
     chessGame = new ChessGame();
-    // Create GameInstance
     gameInstance = new GameInstance(blackPlayer, whitePlayer);
   });
 
@@ -69,24 +65,15 @@ describe('GameInstance', () => {
     });
 
     test('should handle move correctly', () => {
-      // Simulate a move
       const mockMove: Move = { 
-        from: 'e2', 
-        to: 'e4', 
-        promotion: undefined 
+        from: {row: 1, col:1}, 
+        to: {row: 3, col: 1}, 
+        piece: {colour: PieceColour.BLACK, type: PieceType.PAWN}
       };
-
-      // Find the move handler for white player
       const whiteMoveHandler = (whiteSocket.on as jest.Mock).mock.calls
         .find(call => call[0] === 'makeMove')[1];
-
-      // Call the move handler
       whiteMoveHandler(mockMove);
-
-      // Verify move was made on chess game
       expect(chessGame.makeMove).toHaveBeenCalledWith(mockMove);
-
-      // Verify move was emitted to both players
       expect(whiteSocket.emit).toHaveBeenCalledWith('moveMade', mockMove, chessGame.gameState);
       expect(blackSocket.emit).toHaveBeenCalledWith('moveMade', mockMove, chessGame.gameState);
     });
@@ -101,21 +88,17 @@ describe('GameInstance', () => {
 
       gameInstance.handleResign(PieceColour.WHITE);
 
-      // Verify game over event emitted to both players
       expect(whiteSocket.emit).toHaveBeenCalledWith('gameOver', expectedOutcome);
       expect(blackSocket.emit).toHaveBeenCalledWith('gameOver', expectedOutcome);
     });
 
     test('should handle draw offer workflow', () => {
-      // Simulate draw offer from white player
       const blackSocketOnMock = blackSocket.on as jest.Mock;
 
       gameInstance.handleDrawOffered(PieceColour.WHITE);
 
-      // Verify draw offer sent to black player
       expect(blackSocket.emit).toHaveBeenCalledWith('drawOffered');
 
-      // Simulate draw acceptance
       const drawAcceptedHandler = blackSocketOnMock.mock.calls
         .find(call => call[0] === 'drawAccepted')[1];
 
@@ -126,10 +109,8 @@ describe('GameInstance', () => {
 
       drawAcceptedHandler();
 
-      // Verify game over event emitted
       expect(whiteSocket.emit).toHaveBeenCalledWith('gameOver', expectedOutcome);
 
-      // Verify listeners removed
       expect(blackSocket.removeAllListeners).toHaveBeenCalledWith('drawAccepted');
       expect(blackSocket.removeAllListeners).toHaveBeenCalledWith('drawDeclined');
     });
@@ -139,16 +120,13 @@ describe('GameInstance', () => {
 
       gameInstance.handleDrawOffered(PieceColour.WHITE);
 
-      // Simulate draw decline
       const drawDeclinedHandler = blackSocketOnMock.mock.calls
         .find(call => call[0] === 'drawDeclined')[1];
 
       drawDeclinedHandler();
 
-      // Verify draw rejected event sent to white player
       expect(whiteSocket.emit).toHaveBeenCalledWith('drawRejected');
 
-      // Verify listeners removed
       expect(blackSocket.removeAllListeners).toHaveBeenCalledWith('drawAccepted');
       expect(blackSocket.removeAllListeners).toHaveBeenCalledWith('drawDeclined');
     });
@@ -181,9 +159,8 @@ describe('GameInstance', () => {
       const mockMove: Move = { 
         from: {row: 6, col: 4}, 
         to: {row: 6, col: 4}, 
-        
+        piece: {colour: PieceColour.WHITE, type: PieceType.PAWN}
       };
-
       gameInstance.emitMoveMade(whiteSocket, mockMove);
       expect(whiteSocket.emit).toHaveBeenCalledWith('moveMade', mockMove, gameInstance.game.gameState);
     });
