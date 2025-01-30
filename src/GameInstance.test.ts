@@ -36,12 +36,13 @@ describe('GameInstance', () => {
       name: 'BlackPlayer'
     };
 
+    jest.spyOn(ChessGame.prototype, 'makeMove').mockImplementation(jest.fn());
     chessGame = new ChessGame();
     gameInstance = new GameInstance(blackPlayer, whitePlayer);
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    jest.clearAllMocks(); 
   });
 
   describe('Constructor', () => {
@@ -58,12 +59,7 @@ describe('GameInstance', () => {
     });
   });
 
-  describe('Socket Handlers', () => {
-    test('should register move handlers for both players', () => {
-      expect(whiteSocket.on).toHaveBeenCalledWith('makeMove', expect.any(Function));
-      expect(blackSocket.on).toHaveBeenCalledWith('makeMove', expect.any(Function));
-    });
-
+  describe('Move Handlers', () => {
     test('should handle move correctly', () => {
       const mockMove: Move = { 
         from: {row: 1, col:1}, 

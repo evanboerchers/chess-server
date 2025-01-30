@@ -19,24 +19,26 @@ export class GameInstance {
     }
 
     handleStart() {
-        this.whitePlayer.socket.emit("gameStarted")
-        this.blackPlayer.socket.emit("gameStarted")
-        this.blackPlayer.socket.emit("waiting")
-        this.whitePlayer.socket.emit("makeMove")
+        this.emitGameStarted(this.whitePlayer.socket);
+        this.emitGameStarted(this.blackPlayer.socket);
+        this.emitWaiting(this.blackPlayer.socket);
+        this.emitMakeMove(this.whitePlayer.socket);
     }
-
+    
     initSocketHandlers(colour: PieceColour, socket: Socket) {
         socket.on("makeMove",  (move: Move) => this.handleMove(colour, move))
         socket.on("resign",  () => this.handleResign(colour))
         socket.on("offerDraw",  () => this.handleDrawOffered(colour))
     }
-
+    
     handleMove(colour: PieceColour, move: Move) {
         const socket = this.getPlayer(colour).socket
         const oppSocket = this.getOpponent(colour).socket
         this.game.makeMove(move)
         this.emitMoveMade(socket, move)
         this.emitMoveMade(oppSocket, move)
+        this.emitMakeMove(oppSocket)
+        this.emitWaiting(socket)
     }
 
     handleResign(colour: PieceColour) {
@@ -74,6 +76,10 @@ export class GameInstance {
 
     emitMakeMove(socket: Socket) {
         socket.emit("makeMove")
+    }
+
+    emitWaiting(socket: Socket) {
+        socket.emit("waiting")
     }
     
     emitMoveMade(socket: Socket, move: Move) {
