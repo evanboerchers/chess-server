@@ -1,9 +1,8 @@
-import{v4 as uuid} from 'uuid'
 import { GameInstance } from './GameInstance';
 import { Player } from './types';
 
 
-class GamesService {
+export class GamesService {
     waitingQueue: Player[]
     activeGames: Map<string, GameInstance>
 
@@ -11,12 +10,6 @@ class GamesService {
         this.waitingQueue = []
         this.activeGames = new Map();
     }
-
-    // startGame(whitePlayer: string, blackPlayer: string) {
-    //     const game: GameInstance = new GameInstance()
-    //     this.activeGames.set(uuid(), game)
-    //     return game
-    // }
 
     addPlayerToQueue(player: Player) {
         this.waitingQueue.push(player);
@@ -27,7 +20,8 @@ class GamesService {
         while(this.waitingQueue.length >= 2) {
             const whitePlayer = <Player>this.waitingQueue.shift()            
             const blackPlayer = <Player>this.waitingQueue.shift()           
-            this.createGame(whitePlayer, blackPlayer)
+            const game = this.createGame(whitePlayer, blackPlayer)
+            this.activeGames.set(game.uuid, game)
         }
     }
 
@@ -45,6 +39,10 @@ class GamesService {
                 return game
             }
         }
+    }
+
+    removeGame(uuid: string): boolean {
+        return this.activeGames.delete(uuid)
     }
 }
 const gamesService = new GamesService();

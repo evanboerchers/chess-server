@@ -1,15 +1,18 @@
 import { Socket } from "socket.io";
+import{v4 as uuid} from 'uuid'
 import { GameOutcome, GameOutcomeReason, Player } from "./types";
 import { ChessGame } from "@evanboerchers/chess-core"
 import { Move, PieceColour } from "@evanboerchers/chess-core";
 
 export class GameInstance {
     
+    uuid: string
     blackPlayer: Player
     whitePlayer: Player
     game: ChessGame
 
     constructor(blackPlayer: Player, whitePlayer: Player) {
+        this.uuid = uuid();
         this.whitePlayer = whitePlayer
         this.blackPlayer = blackPlayer
         this.game = new ChessGame()
