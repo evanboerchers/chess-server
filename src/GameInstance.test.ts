@@ -38,7 +38,7 @@ describe('GameInstance', () => {
 
     jest.spyOn(ChessGame.prototype, 'makeMove').mockImplementation(jest.fn());
     chessGame = new ChessGame();
-    gameInstance = new GameInstance(blackPlayer, whitePlayer);
+    gameInstance = new GameInstance(whitePlayer, blackPlayer);
   });
 
   afterEach(() => {

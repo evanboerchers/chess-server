@@ -1,16 +1,10 @@
 import { PieceColour, Move } from "@evanboerchers/chess-core"
 import { Socket } from "socket.io"
-
-export interface ServerToClientEvents {
-    gameUpdate: (state: any) => void;
-}
-export interface ClientToServerEvents {
-    makeMove: (move: Move) => void;
-}
+import { ClientToServerEvents, ServerToClientEvents, SocketData } from "./socket.types";
 
 export interface Player {
     name: string
-    socket: Socket
+    socket: Socket<ClientToServerEvents,ServerToClientEvents, SocketData>
 }
 
 export interface GameInfo {

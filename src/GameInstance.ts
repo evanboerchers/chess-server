@@ -7,11 +7,11 @@ import { Move, PieceColour } from "@evanboerchers/chess-core";
 export class GameInstance {
     
     uuid: string
-    blackPlayer: Player
     whitePlayer: Player
+    blackPlayer: Player
     game: ChessGame
 
-    constructor(blackPlayer: Player, whitePlayer: Player) {
+    constructor(whitePlayer: Player, blackPlayer: Player) {
         this.uuid = uuid();
         this.whitePlayer = whitePlayer
         this.blackPlayer = blackPlayer
@@ -98,7 +98,7 @@ export class GameInstance {
     }
 
     emitDrawDeclined(socket: Socket) {
-        socket.emit("drawRejected")
+        socket.emit("drawDeclined")
     }
 
     getPlayer(colour: PieceColour) {

@@ -1,180 +1,210 @@
-import gamesService, { GamesService } from './GamesService';
+import { GamesService } from './GamesService';
 import { GameInstance } from './GameInstance';
 import { Player } from './types';
-import { Socket } from 'socket.io';
+import uuid from 'uuid';
 
-// Mock the GameInstance class
-jest.mock('./GameInstance');
+jest.mock('uuid', () => ({
+  v4: jest.fn()
+}));
+
+jest.mock('./GameInstance', () => {
+  return {
+    GameInstance: jest.fn().mockImplementation((whitePlayer, blackPlayer) => {
+      const uniqueUuid = jest.requireMock('uuid').v4();
+      return {
+        uuid: uniqueUuid,
+        whitePlayer,
+        blackPlayer
+      };
+    })
+  };
+});
 
 describe('GamesService', () => {
-  let service: GamesService;
-  let mockSocket1: jest.Mocked<Socket>;
-  let mockSocket2: jest.Mocked<Socket>;
-  let mockPlayer1: Player;
-  let mockPlayer2: Player;
-  let mockGameInstance: GameInstance;
+  let gamesService: GamesService;
+  let mockWhitePlayer: Player;
+  let mockBlackPlayer: Player;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockSocket1 = {
-      id: 'socket1',
-      emit: jest.fn(),
-      on: jest.fn(),
-      disconnect: jest.fn(),
-    } as unknown as jest.Mocked<Socket>;
-    mockSocket2 = {
-      id: 'socket2',
-      emit: jest.fn(),
-      on: jest.fn(),
-      disconnect: jest.fn(),
-    } as unknown as jest.Mocked<Socket>;
-    mockPlayer1 = {
-      name: 'player1',
-      socket: mockSocket1
+
+    gamesService = new GamesService();
+
+    mockWhitePlayer = {
+      name: 'white-player-id',
+      socket: {} as any
     };
-    mockPlayer2 = {
-      name: 'player2',
-      socket: mockSocket2
+
+    mockBlackPlayer = {
+      name: 'black-player-id', 
+      socket: {} as any
     };
-    mockGameInstance = {
-      uuid: 'game-uuid',
-      whitePlayer: mockPlayer1,
-      blackPlayer: mockPlayer2
-    } as GameInstance;
-    service = new GamesService();
-    (GameInstance as jest.Mock).mockImplementation(() => mockGameInstance);
+
+    (uuid.v4 as jest.Mock)
+      .mockReturnValueOnce('uuid-1')
+      .mockReturnValueOnce('uuid-2')
+      .mockReturnValueOnce('uuid-3')
+      .mockReturnValueOnce('uuid-4')
+      .mockReturnValueOnce('uuid-5');
+  });
+
+  describe('Constructor', () => {
+    it('should initialize with empty waiting queue and active games', () => {
+      expect(gamesService.waitingQueue).toHaveLength(0);
+      expect(gamesService.activeGames.size).toBe(0);
+    });
   });
 
   describe('addPlayerToQueue', () => {
-    it('should add a player to the waiting queue', () => {
-      service.addPlayerToQueue(mockPlayer1);
-      expect(service.waitingQueue).toContain(mockPlayer1);
-    });
-
-    it('should match players when there are enough players in queue', () => {
-      const spy = jest.spyOn(service, 'matchPlayers');
+    it('should add player to waiting queue', () => {
+      gamesService.addPlayerToQueue(mockWhitePlayer);
       
-      service.addPlayerToQueue(mockPlayer1);
-      expect(spy).toHaveBeenCalled();
-    });
-  });
-
-  describe('matchPlayers', () => {
-    it('should create a game when there are two players in queue', () => {
-      service.addPlayerToQueue(mockPlayer1);
-      service.addPlayerToQueue(mockPlayer2);
-
-      expect(service.waitingQueue).toHaveLength(0);
-      expect(service.activeGames.size).toBe(1);
-      expect(GameInstance).toHaveBeenCalledWith(mockPlayer1, mockPlayer2);
+      expect(gamesService.waitingQueue).toHaveLength(1);
+      expect(gamesService.waitingQueue[0]).toBe(mockWhitePlayer);
     });
 
-    it('should not create a game when there is only one player in queue', () => {
-      service.addPlayerToQueue(mockPlayer1);
+    it('should automatically match players when two are in the queue', () => {
+      gamesService.addPlayerToQueue(mockWhitePlayer);
+      gamesService.addPlayerToQueue(mockBlackPlayer);
 
-      expect(service.waitingQueue).toHaveLength(1);
-      expect(service.activeGames.size).toBe(0);
+      expect(GameInstance).toHaveBeenCalledWith(mockWhitePlayer, mockBlackPlayer);
+      expect(gamesService.activeGames.size).toBe(1);
+      expect(gamesService.waitingQueue).toHaveLength(0);
     });
 
-    it('should handle multiple pairs of players', () => {
-      const mockSocket3 = {
-        id: 'socket3',
-        emit: jest.fn(),
-        on: jest.fn(),
-        disconnect: jest.fn(),
-      } as unknown as jest.Mocked<Socket>;
+    it('should handle multiple player additions', () => {
+      const player1: Player = { name: 'player1', socket: {} as any };
+      const player2: Player = { name: 'player2', socket: {} as any };
+      const player3: Player = { name: 'player3', socket: {} as any };
 
-      const mockSocket4 = {
-        id: 'socket4',
-        emit: jest.fn(),
-        on: jest.fn(),
-        disconnect: jest.fn(),
-      } as unknown as jest.Mocked<Socket>;
-
-      const mockPlayer3: Player = {
-        name: 'player3',
-        socket: mockSocket3
-      };
-
-      const mockPlayer4: Player = {
-        name: 'player4',
-        socket: mockSocket4
-      };
-
-      service.addPlayerToQueue(mockPlayer1);
-      service.addPlayerToQueue(mockPlayer2);
-      service.addPlayerToQueue(mockPlayer3);
-      service.addPlayerToQueue(mockPlayer4);
-
-      expect(service.waitingQueue).toHaveLength(0);
-      expect(service.activeGames.size).toBe(2);
-    });
-  });
-
-  describe('createGame', () => {
-    it('should create a new game instance with the provided players', () => {
-      const game = service.createGame(mockPlayer1, mockPlayer2);
+      gamesService.addPlayerToQueue(player1);
+      gamesService.addPlayerToQueue(player2);
       
-      expect(GameInstance).toHaveBeenCalledWith(mockPlayer1, mockPlayer2);
-      expect(game).toBe(mockGameInstance);
+      expect(gamesService.activeGames.size).toBe(1);
+      expect(gamesService.waitingQueue).toHaveLength(0);
+
+      gamesService.addPlayerToQueue(player3);
+      
+      expect(gamesService.activeGames.size).toBe(1);
+      expect(gamesService.waitingQueue).toHaveLength(1);
+      expect(gamesService.waitingQueue[0]).toBe(player3);
     });
   });
 
   describe('getGame', () => {
-    it('should return the game with the specified UUID', () => {
-      service.addPlayerToQueue(mockPlayer1);
-      service.addPlayerToQueue(mockPlayer2);
+    it('should return game by UUID', () => {
+      gamesService.addPlayerToQueue(mockWhitePlayer);
+      gamesService.addPlayerToQueue(mockBlackPlayer);
 
-      const game = service.getGame(mockGameInstance.uuid);
-      expect(game).toBe(mockGameInstance);
+      const gameUuid = Array.from(gamesService.activeGames.keys())[0];
+      const game = gamesService.getGame(gameUuid);
+      
+      expect(game).toBeDefined();
+      expect(game?.uuid).toBe(gameUuid);
     });
 
-    it('should return undefined for non-existent game UUID', () => {
-      const game = service.getGame('non-existent-uuid');
+    it('should return undefined for non-existent game', () => {
+      const game = gamesService.getGame('non-existent-uuid');
+      
       expect(game).toBeUndefined();
     });
   });
 
   describe('getGameByPlayer', () => {
-    beforeEach(() => {
-      service.addPlayerToQueue(mockPlayer1);
-      service.addPlayerToQueue(mockPlayer2);
+    it('should find game when player is white', () => {
+      gamesService.addPlayerToQueue(mockWhitePlayer);
+      gamesService.addPlayerToQueue(mockBlackPlayer);
+
+      const game = gamesService.getGameByPlayer('white-player-id');
+      
+      expect(game).toBeDefined();
+      expect(game?.whitePlayer).toBe(mockWhitePlayer);
     });
 
-    it('should return game for white player UUID', () => {
-      const game = service.getGameByPlayer(mockPlayer1.name);
-      expect(game).toBe(mockGameInstance);
+    it('should find game when player is black', () => {
+      gamesService.addPlayerToQueue(mockWhitePlayer);
+      gamesService.addPlayerToQueue(mockBlackPlayer);
+
+      const game = gamesService.getGameByPlayer('black-player-id');
+      
+      expect(game).toBeDefined();
+      expect(game?.blackPlayer).toBe(mockBlackPlayer);
     });
 
-    it('should return game for black player UUID', () => {
-      const game = service.getGameByPlayer(mockPlayer2.name);
-      expect(game).toBe(mockGameInstance);
-    });
-
-    it('should return undefined for non-existent player UUID', () => {
-      const game = service.getGameByPlayer('non-existent-uuid');
+    it('should return undefined when player is not in any game', () => {
+      const game = gamesService.getGameByPlayer('non-existent-player');
+      
       expect(game).toBeUndefined();
     });
   });
 
   describe('removeGame', () => {
-    beforeEach(() => {
-      service.addPlayerToQueue(mockPlayer1);
-      service.addPlayerToQueue(mockPlayer2);
-    });
+    it('should remove an existing game and return true', () => {
+      gamesService.addPlayerToQueue(mockWhitePlayer);
+      gamesService.addPlayerToQueue(mockBlackPlayer);
 
-    it('should remove the game with the specified UUID', () => {
-      const result = service.removeGame(mockGameInstance.uuid);
+      const gameUuid = Array.from(gamesService.activeGames.keys())[0];
+      const removeResult = gamesService.removeGame(gameUuid);
       
-      expect(result).toBe(true);
-      expect(service.activeGames.size).toBe(0);
+      expect(removeResult).toBe(true);
+      expect(gamesService.activeGames.size).toBe(0);
     });
 
     it('should return false when trying to remove non-existent game', () => {
-      const result = service.removeGame('non-existent-uuid');
+      const removeResult = gamesService.removeGame('non-existent-uuid');
       
-      expect(result).toBe(false);
-      expect(service.activeGames.size).toBe(1);
+      expect(removeResult).toBe(false);
+    });
+  });
+
+  describe('Multiple Game Handling', () => {
+    it('should create multiple unique games when more than two players join', () => {
+      const player1: Player = { name: 'player1', socket: {} as any };
+      const player2: Player = { name: 'player2', socket: {} as any };
+      const player3: Player = { name: 'player3', socket: {} as any };
+      const player4: Player = { name: 'player4', socket: {} as any };
+
+      gamesService.addPlayerToQueue(player1);
+      gamesService.addPlayerToQueue(player2);
+
+      gamesService.addPlayerToQueue(player3);
+      gamesService.addPlayerToQueue(player4);
+
+      expect(gamesService.activeGames.size).toBe(2);
+
+      const gameUuids = Array.from(gamesService.activeGames.keys());
+      expect(gameUuids[0]).not.toBe(gameUuids[1]);
+
+      const games = Array.from(gamesService.activeGames.values());
+      expect(games[0].whitePlayer).toBe(player1);
+      expect(games[0].blackPlayer).toBe(player2);
+      expect(games[1].whitePlayer).toBe(player3);
+      expect(games[1].blackPlayer).toBe(player4);
+    });
+
+    it('should handle many players joining the queue', () => {
+      const players = Array.from({ length: 6 }, (_, i) => ({ 
+        name: `player-${i}`, 
+        socket: {} as any 
+      }));
+
+      players.forEach(player => gamesService.addPlayerToQueue(player));
+
+      expect(gamesService.activeGames.size).toBe(3);
+      expect(gamesService.waitingQueue).toHaveLength(0);
+
+      const gameUuids = Array.from(gamesService.activeGames.keys());
+      const uniqueUuids = new Set(gameUuids);
+      expect(uniqueUuids.size).toBe(gameUuids.length);
+    });
+  });
+
+  describe('createGame', () => {
+    it('should create a new GameInstance', () => {
+      const game = gamesService.createGame(mockWhitePlayer, mockBlackPlayer);
+      
+      expect(game).toBeDefined();
+      expect(GameInstance).toHaveBeenCalledWith(mockWhitePlayer, mockBlackPlayer);
     });
   });
 });
