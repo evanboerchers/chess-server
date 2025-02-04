@@ -121,7 +121,7 @@ describe('GameInstance', () => {
 
       drawDeclinedHandler();
 
-      expect(whiteSocket.emit).toHaveBeenCalledWith('drawRejected');
+      expect(whiteSocket.emit).toHaveBeenCalledWith('drawDeclined');
 
       expect(blackSocket.removeAllListeners).toHaveBeenCalledWith('drawAccepted');
       expect(blackSocket.removeAllListeners).toHaveBeenCalledWith('drawDeclined');

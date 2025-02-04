@@ -20,5 +20,4 @@ export interface ServerToClientEvents {
   
   export interface SocketData {
     name: string;
-    color?: PieceColour;
   }

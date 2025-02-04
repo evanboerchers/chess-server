@@ -1,34 +1,31 @@
 import { Server, Socket } from 'socket.io';
 import express from 'express';
+import { ClientToServerEvents, ServerToClientEvents, SocketData } from './socket.types';
+import gamesService from './GamesService';
 import { Player } from './types';
 
 
-export function createServer(port: number) {
-
+export function createServer(port: number): express.Express {
     const app = express();
     const server = app.listen(port, () => {
     console.log(`Game server running on http://localhost:${port}`);
     });
-    const io = new Server(server, {
+    const io = new Server<ClientToServerEvents, ServerToClientEvents, SocketData>(server, {
         cors: {
-            origin: '*', // Allow all origins for simplicity
+            origin: '*',
         },
     });
-    
-    
-    // Event Handlers
     io.on('connection', (socket: Socket) => {
         console.log(`Player connected: ${socket.id}`);
-    
-        // Add player to the queue
-        socket.on('join_queue', (playerName: string) => {
-            console.log(`${playerName || 'Anonymous'} joined the queue.`);
+        socket.on('joinQueue', (playerName: string) => {
+            console.log(`${playerName} joined the queue: ${socket.id}`);
+            const player: Player = {name: playerName, socket: socket}
+            gamesService.addPlayerToQueue(player)
         });
-    
-        // Handle player disconnection
         socket.on('disconnect', () => {
             console.log(`Player disconnected: ${socket.id}`);
         });
     });
+    return app
 }
 
