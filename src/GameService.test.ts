@@ -1,16 +1,16 @@
 import { GamesService } from './GamesService';
 import { GameInstance } from './GameInstance';
 import { Player } from './types';
-import uuid from 'uuid';
+import { vi } from 'vitest'; // Import vi from Vitest for mocks
 
-jest.mock('uuid', () => ({
-  v4: jest.fn()
+vi.mock('uuid', () => ({
+  v4: vi.fn()
 }));
 
-jest.mock('./GameInstance', () => {
+vi.mock('./GameInstance', () => {
   return {
-    GameInstance: jest.fn().mockImplementation((whitePlayer, blackPlayer) => {
-      const uniqueUuid = jest.requireMock('uuid').v4();
+    GameInstance: vi.fn().mockImplementation((whitePlayer, blackPlayer) => {
+      const uniqueUuid = vi.fn().mockReturnValueOnce('uuid-1')();
       return {
         uuid: uniqueUuid,
         whitePlayer,
@@ -26,7 +26,7 @@ describe('GamesService', () => {
   let mockBlackPlayer: Player;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     gamesService = new GamesService();
 
@@ -40,9 +40,7 @@ describe('GamesService', () => {
       socket: {} as any
     };
 
-    (uuid.v4 as jest.Mock)
-      .mockReturnValueOnce('uuid-1')
-      .mockReturnValueOnce('uuid-2')
+    vi.mocked(vi.fn().mockReturnValueOnce('uuid-1')).mockReturnValueOnce('uuid-2')
       .mockReturnValueOnce('uuid-3')
       .mockReturnValueOnce('uuid-4')
       .mockReturnValueOnce('uuid-5');

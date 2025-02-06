@@ -4,10 +4,11 @@ import { ChessGame } from '@evanboerchers/chess-core';
 import { Move, PieceColour, PieceType } from '@evanboerchers/chess-core';
 import { Player } from './types';
 import { GameOutcome, GameOutcomeReason } from './types';
+import { vi } from 'vitest';
 
 describe('GameInstance', () => {
-  let whiteSocket: jest.Mocked<Socket>;
-  let blackSocket: jest.Mocked<Socket>;
+  let whiteSocket: vi.Mocked<Socket>;
+  let blackSocket: vi.Mocked<Socket>;
   let whitePlayer: Player;
   let blackPlayer: Player;
   let gameInstance: GameInstance;
@@ -15,16 +16,16 @@ describe('GameInstance', () => {
 
   beforeEach(() => {
     whiteSocket = {
-      emit: jest.fn(),
-      on: jest.fn(),
-      removeAllListeners: jest.fn()
-    } as unknown as jest.Mocked<Socket>;
+      emit: vi.fn(),
+      on: vi.fn(),
+      removeAllListeners: vi.fn()
+    } as unknown as vi.Mocked<Socket>;
 
     blackSocket = {
-      emit: jest.fn(),
-      on: jest.fn(),
-      removeAllListeners: jest.fn()
-    } as unknown as jest.Mocked<Socket>;
+      emit: vi.fn(),
+      on: vi.fn(),
+      removeAllListeners: vi.fn()
+    } as unknown as vi.Mocked<Socket>;
 
     whitePlayer = { 
       socket: whiteSocket,
@@ -36,13 +37,13 @@ describe('GameInstance', () => {
       name: 'BlackPlayer'
     };
 
-    jest.spyOn(ChessGame.prototype, 'makeMove').mockImplementation(jest.fn());
+    vi.spyOn(ChessGame.prototype, 'makeMove').mockImplementation(vi.fn());
     chessGame = new ChessGame();
     gameInstance = new GameInstance(whitePlayer, blackPlayer);
   });
 
   afterEach(() => {
-    jest.clearAllMocks(); 
+    vi.clearAllMocks(); 
   });
 
   describe('Constructor', () => {
@@ -66,7 +67,7 @@ describe('GameInstance', () => {
         to: {row: 3, col: 1}, 
         piece: {colour: PieceColour.BLACK, type: PieceType.PAWN}
       };
-      const whiteMoveHandler = (whiteSocket.on as jest.Mock).mock.calls
+      const whiteMoveHandler = (whiteSocket.on as vi.Mock).mock.calls
         .find(call => call[0] === 'makeMove')[1];
       whiteMoveHandler(mockMove);
       expect(chessGame.makeMove).toHaveBeenCalledWith(mockMove);
@@ -89,7 +90,7 @@ describe('GameInstance', () => {
     });
 
     test('should handle draw offer workflow', () => {
-      const blackSocketOnMock = blackSocket.on as jest.Mock;
+      const blackSocketOnMock = blackSocket.on as vi.Mock;
 
       gameInstance.handleDrawOffered(PieceColour.WHITE);
 
@@ -112,7 +113,7 @@ describe('GameInstance', () => {
     });
 
     test('should handle draw decline', () => {
-      const blackSocketOnMock = blackSocket.on as jest.Mock;
+      const blackSocketOnMock = blackSocket.on as vi.Mock;
 
       gameInstance.handleDrawOffered(PieceColour.WHITE);
 
