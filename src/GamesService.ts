@@ -34,6 +34,8 @@ export class GamesService {
             const blackPlayer = <Player>this.waitingQueue.shift()           
             const game = this.createGame(whitePlayer, blackPlayer)
             this.activeGames.set(game.uuid, game)
+            this.removePlayerFromQueue(whitePlayer.name)
+            this.removePlayerFromQueue(blackPlayer.name)
         }
     }
 

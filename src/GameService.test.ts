@@ -2,23 +2,7 @@ import { GamesService } from './GamesService';
 import { GameInstance } from './GameInstance';
 import { Player } from './types';
 import { vi } from 'vitest'; // Import vi from Vitest for mocks
-
-vi.mock('uuid', () => ({
-  v4: vi.fn()
-}));
-
-vi.mock('./GameInstance', () => {
-  return {
-    GameInstance: vi.fn().mockImplementation((whitePlayer, blackPlayer) => {
-      const uniqueUuid = vi.fn().mockReturnValueOnce('uuid-1')();
-      return {
-        uuid: uniqueUuid,
-        whitePlayer,
-        blackPlayer
-      };
-    })
-  };
-});
+import { v4 as uuidv4 } from 'uuid';
 
 describe('GamesService', () => {
   let gamesService: GamesService;
@@ -40,10 +24,27 @@ describe('GamesService', () => {
       socket: {} as any
     };
 
-    vi.mocked(vi.fn().mockReturnValueOnce('uuid-1')).mockReturnValueOnce('uuid-2')
-      .mockReturnValueOnce('uuid-3')
-      .mockReturnValueOnce('uuid-4')
-      .mockReturnValueOnce('uuid-5');
+    vi.mock('uuid', () => ({
+      v4: vi.fn()
+        .mockReturnValueOnce('uuid-1')
+        .mockReturnValueOnce('uuid-2')
+        .mockReturnValueOnce('uuid-3')
+        .mockReturnValueOnce('uuid-4')
+        .mockReturnValueOnce('uuid-5')
+    }));
+
+    vi.mock('./GameInstance', () => {
+      return {
+        GameInstance: vi.fn().mockImplementation((whitePlayer, blackPlayer) => {
+          const uniqueUuid = uuidv4()
+          return {
+            uuid: uniqueUuid,
+            whitePlayer,
+            blackPlayer
+          };
+        })
+      };
+    });
   });
 
   describe('Constructor', () => {
