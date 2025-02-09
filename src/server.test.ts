@@ -165,12 +165,12 @@ describe('Game Server', () => {
     });
 
     // Test Error Handling
-    // describe('Error Handling', () => {
-    //     test('should handle invalid events gracefully', async () => {
-    //         // @ts-ignore - Intentionally sending invalid event
-    //         clientSocket1.emit('invalidEvent', {}, (error: any) => {
-    //             expect(error).toBeDefined();
-    //         });
-    //     });
-    // });
+    describe('Error Handling', () => {
+        test('should handle invalid events gracefully', async () => {
+            // @ts-ignore - Intentionally sending invalid event
+            clientSocket1.emit('invalidEvent', {}, (error: any) => {
+                expect(error).toBeDefined();
+            });
+        });
+    });
 });

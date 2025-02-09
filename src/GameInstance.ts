@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import{v4 as uuid} from 'uuid'
-import { GameOutcome, GameOutcomeReason, Player } from "./types";
+import { GameOutcome, GameOutcomeReason, GameSocket, Player } from "./types";
 import { ChessGame, Piece } from "@evanboerchers/chess-core"
 import { Move, PieceColour } from "@evanboerchers/chess-core";
 import gamesService from "./GamesService";
@@ -97,31 +97,31 @@ export class GameInstance {
         gamesService.removeGame(this.uuid)
     }
 
-    emitGameStarted(socket: Socket) {
-        socket.emit("gameStarted")
+    emitGameStarted(socket: GameSocket) {
+        socket.emit("gameStarted", this.game.gameState)
     }
 
-    emitMakeMove(socket: Socket) {
+    emitMakeMove(socket: GameSocket) {
         socket.emit("makeMove")
     }
 
-    emitWaiting(socket: Socket) {
+    emitWaiting(socket: GameSocket) {
         socket.emit("waiting")
     }
     
-    emitMoveMade(socket: Socket, move: Move) {
+    emitMoveMade(socket: GameSocket, move: Move) {
         socket.emit("moveMade", move, this.game.gameState)
     }
 
-    emitDrawOffered(socket: Socket) {
+    emitDrawOffered(socket: GameSocket) {
         socket.emit("drawOffered")
     }
 
-    emitGameOver(socket: Socket, result: GameOutcome) {
+    emitGameOver(socket: GameSocket, result: GameOutcome) {
         socket.emit("gameOver", result)
     }
 
-    emitDrawDeclined(socket: Socket) {
+    emitDrawDeclined(socket: GameSocket) {
         socket.emit("drawDeclined")
     }
 

@@ -1,5 +1,5 @@
 
-import { Move, PieceColour } from "@evanboerchers/chess-core";
+import { GameState, Move, PieceColour } from "@evanboerchers/chess-core";
 import { Server, Socket } from "socket.io"
 import express from 'express'
 import { createServer as createHttpServer } from 'http';
@@ -7,10 +7,10 @@ import { createServer as createHttpServer } from 'http';
 
 export interface ServerToClientEvents {
     queueJoined: () => void;
-    gameStarted: () => void;
+    gameStarted: (state: GameState) => void;
     makeMove: () => void;
     waiting: () => void;
-    moveMade: (move: Move) => void; 
+    moveMade: (move: Move, state: GameState) => void; 
     drawOffered: () => void;
     gameOver: (result: GameOutcome) => void;
     drawDeclined: () => void;
