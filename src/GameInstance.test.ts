@@ -53,8 +53,8 @@ describe('GameInstance', () => {
     });
 
     test('should emit game start events', () => {
-      expect(whiteSocket.emit).toHaveBeenCalledWith('gameStarted');
-      expect(blackSocket.emit).toHaveBeenCalledWith('gameStarted');
+      expect(whiteSocket.emit).toHaveBeenCalledWith('gameStarted', chessGame.gameState);
+      expect(blackSocket.emit).toHaveBeenCalledWith('gameStarted', chessGame.gameState);
       expect(blackSocket.emit).toHaveBeenCalledWith('waiting');
       expect(whiteSocket.emit).toHaveBeenCalledWith('makeMove');
     });
@@ -144,7 +144,7 @@ describe('GameInstance', () => {
   describe('Emit Methods', () => {
     test('emitGameStarted should emit correct event', () => {
       gameInstance.emitGameStarted(whiteSocket);
-      expect(whiteSocket.emit).toHaveBeenCalledWith('gameStarted');
+      expect(whiteSocket.emit).toHaveBeenCalledWith('gameStarted', chessGame.gameState);
     });
 
     test('emitMakeMove should emit correct event', () => {
