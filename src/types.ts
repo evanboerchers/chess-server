@@ -7,7 +7,7 @@ import { createServer as createHttpServer } from 'http';
 
 export interface ServerToClientEvents {
     queueJoined: () => void;
-    gameStarted: (state: GameState) => void;
+    gameStarted: (playerColour: PieceColour, state: GameState) => void;
     makeMove: () => void;
     waiting: () => void;
     moveMade: (move: Move, state: GameState) => void; 
@@ -18,7 +18,7 @@ export interface ServerToClientEvents {
   
 export interface ClientToServerEvents {
     joinQueue: (playerName: string) => void;
-    makeMove: (move: Move) => void;
+    moveMade: (move: Move) => void;
     resign: () => void;
     offerDraw: () => void;
     drawAccepted: () => void;

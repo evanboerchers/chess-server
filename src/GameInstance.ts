@@ -24,8 +24,9 @@ export class GameInstance {
     }
 
     handleStart() {
-        this.emitGameStarted(this.whitePlayer.socket);
-        this.emitGameStarted(this.blackPlayer.socket);
+        this.emitGameStarted(this.whitePlayer.socket, PieceColour.WHITE);
+        this.emitGameStarted(this.blackPlayer.socket, PieceColour.BLACK);
+        // add game ready reply from players
         this.emitWaiting(this.blackPlayer.socket);
         this.emitMakeMove(this.whitePlayer.socket);
     }
@@ -97,8 +98,8 @@ export class GameInstance {
         gamesService.removeGame(this.uuid)
     }
 
-    emitGameStarted(socket: GameSocket) {
-        socket.emit("gameStarted", this.game.gameState)
+    emitGameStarted(socket: GameSocket, playerColour: PieceColour) {
+        socket.emit("gameStarted", playerColour, this.game.gameState)
     }
 
     emitMakeMove(socket: GameSocket) {
