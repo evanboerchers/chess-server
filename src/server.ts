@@ -16,18 +16,7 @@ export function createServer(port: number): GameServerInstance {
     });
 
     io.on('connection', (socket: GameSocket) => {
-        console.log(`Player connected: ${socket.id}`);
-        socket.on('joinQueue', (playerName: string) => {
-            socket.data.playerName = playerName
-            console.log(`${playerName} joined the queue: ${socket.id}`);
-            const player: Player = {name: playerName, socket: socket}
-            gamesService.addPlayerToQueue(player)
-            player.socket.emit("queueJoined")
-        });
-        socket.on('disconnect', () => {
-            console.log(`Player disconnected: ${socket.id}`);
-            gamesService.removePlayerFromGame(socket.data.playerName)
-        });
+        gamesService.connectPlayer(socket);
     });
 
     httpServer.listen(port, () => {

@@ -7,6 +7,7 @@ import { createServer as createHttpServer } from 'http';
 
 export interface ServerToClientEvents {
     queueJoined: () => void;
+    queueCount: (count: number) => void;
     gameStarted: (playerColour: PieceColour, state: GameState) => void;
     makeMove: () => void;
     waiting: () => void;

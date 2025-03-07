@@ -1,20 +1,54 @@
 import { GameInstance } from './GameInstance';
-import { Player } from './types';
+import { GameSocket, Player } from './types';
 
 
 export class GamesService {
+    connections: Map<string, GameSocket>
     waitingQueue: Player[]
     activeGames: Map<string, GameInstance>
 
     constructor() {
+        this.connections = new Map();
         this.waitingQueue = []
         this.activeGames = new Map();
+    }
+
+    connectPlayer(socket: GameSocket): void {
+        console.log(`Player connected: ${socket.id}`);
+        this.connections.set(socket.id, socket)
+        socket.on('joinQueue', (playerName: string) => {
+            this.handleJoinQueue(socket, playerName)
+        });
+        socket.on('disconnect', () => {
+            this.handleDisconnect(socket);
+        });
+    }
+    
+    handleJoinQueue(socket: GameSocket, playerName: string) {
+        console.log(`${playerName} joined the queue: ${socket.id}`);
+        socket.data.playerName = playerName
+        const player: Player = {name: playerName, socket: socket}
+        gamesService.addPlayerToQueue(player)
+        player.socket.emit("queueJoined")
+    }
+    
+    handleDisconnect(socket: GameSocket): void {
+        console.log(`Player disconnected: ${socket.id}`);
+        this.removePlayerFromQueue(socket.data.playerName)
+        this.removePlayerFromGame(socket.data.playerName)
+    }
+
+    emitQueueCount(): void {
+        this.connections.forEach((socket) => {
+            socket.emit("queueCount", this.waitingQueue.length)
+        })
     }
 
     addPlayerToQueue(player: Player): Boolean {
         this.removePlayerFromQueue(player.name);
         this.waitingQueue.push(player);
         this.matchPlayers();
+        this.emitQueueCount()
         return true;
     }
 
@@ -22,6 +56,7 @@ export class GamesService {
         const index = this.waitingQueue.findIndex(player => player.name === playerName)
         if (index !== -1) {
             this.waitingQueue.splice(index, 1)
+            this.emitQueueCount()
             return true;
         } else {
             return false;
@@ -58,7 +93,7 @@ export class GamesService {
     removePlayerFromGame(playerName: string): Boolean {
         const game = this.getGameByPlayer(playerName)
         if (game) {
-            const colour = game.getPlayerColour(playerName)
+        const colour = game.getPlayerColour(playerName)
             if(colour) {
                 game.handleGameAbandoned(colour)
                 return true
