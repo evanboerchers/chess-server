@@ -1,4 +1,4 @@
-import { io, Socket as ClientSocket } from 'socket.io-client';
+    import { io, Socket as ClientSocket } from 'socket.io-client';
 import { createServer } from './server';
 import { GameServerInstance } from './types';
 import request from 'supertest';

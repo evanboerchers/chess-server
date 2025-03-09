@@ -143,7 +143,7 @@ describe('GameInstance', () => {
 
   describe('Emit Methods', () => {
     test('emitGameStarted should emit correct event', () => {
-      gameInstance.emitGameStarted(whiteSocket);
+      gameInstance.emitGameFound(whiteSocket);
       expect(whiteSocket.emit).toHaveBeenCalledWith('gameStarted', chessGame.gameState);
     });
 

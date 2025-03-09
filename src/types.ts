@@ -7,8 +7,9 @@ import { createServer as createHttpServer } from 'http';
 
 export interface ServerToClientEvents {
     queueJoined: () => void;
+    leftQueue: () => void;
     queueCount: (count: number) => void;
-    gameStarted: (playerColour: PieceColour, state: GameState) => void;
+    gameFound: (playerColour: PieceColour, opponentData: PlayerData, state: GameState) => void;
     makeMove: () => void;
     waiting: () => void;
     moveMade: (move: Move, state: GameState) => void; 
@@ -18,7 +19,9 @@ export interface ServerToClientEvents {
   }
   
 export interface ClientToServerEvents {
-    joinQueue: (playerName: string) => void;
+    joinQueue: (playerData: PlayerData) => void;
+    leaveQueue: () => void;
+    gameReady: () => void;
     moveMade: (move: Move) => void;
     resign: () => void;
     offerDraw: () => void;
@@ -40,8 +43,14 @@ export type GameSocket = Socket<ClientToServerEvents,ServerToClientEvents, Socke
 export type GameServer = Server<ClientToServerEvents,ServerToClientEvents, SocketData>
 
 export interface Player {
-    name: string
+    id: string
+    data: PlayerData
     socket: GameSocket
+}
+
+export interface PlayerData {
+    name: string
+    icon: string
 }
 
 export interface GameInfo {

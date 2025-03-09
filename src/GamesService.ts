@@ -1,5 +1,5 @@
 import { GameInstance } from './GameInstance';
-import { GameSocket, Player } from './types';
+import { GameSocket, Player, PlayerData } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
 export class GamesService {
@@ -25,16 +25,21 @@ export class GamesService {
     
         console.log(`Player connected: ${playerId} (Socket ID: ${socket.id})`);
         this.connections.set(playerId, socket);
+        this.emitQueueCount();
+        this.registerConnectionEvents(socket)
+        this.setupLogging(socket);
+    }
 
-        socket.on("joinQueue", (playerName: string) => {
-            this.handleJoinQueue(socket, playerName);
+    registerConnectionEvents(socket: GameSocket) {
+        socket.on("joinQueue", (playerData: PlayerData) => {
+            this.handleJoinQueue(socket, playerData);
         });
-
+        socket.on("leaveQueue", () => {
+            this.handleLeaveQueue(socket);
+        });
         socket.on("disconnect", () => {
             this.handleDisconnect(socket);
         });
-
-        this.setupLogging(socket);
     }
 
     setupLogging(socket: GameSocket): void {
@@ -46,20 +51,25 @@ export class GamesService {
         });
     }
 
-    handleJoinQueue(socket: GameSocket, playerName: string) {
-        const playerId = socket.data.playerId;
-        console.log(`${playerName} (ID: ${playerId}) joined the queue.`);
-
-        socket.data.playerName = playerName;
-        const player: Player = { id: playerId, name: playerName, socket };
-
+    handleJoinQueue(socket: GameSocket, playerData: PlayerData) {
+        const playerId = socket.data.playerId
+        socket.data.playerData = playerData;
+        console.log(`${playerData.name} (ID: ${playerId}) joined the queue.`);
+        const player: Player = { id: playerId, data: playerData, socket };
         this.addPlayerToQueue(player);
         socket.emit("queueJoined");
+    }
+    
+    handleLeaveQueue(socket: GameSocket) {
+        const playerId = socket.data.playerId
+        console.log(`${socket.data.playerData?.name} (ID: ${playerId}) left the queue`)
+        this.removePlayerFromQueue(playerId);
+        socket.emit("leftQueue")
     }
 
     handleDisconnect(socket: GameSocket): void {
         const playerId = socket.data.playerId;
-        console.log(`Player disconnected: ${playerId} (${socket.id})`);
+        console.log(`Player disconnected: ${socket.data.playerData?.name} (ID: ${playerId})`);
 
         this.removePlayerFromQueue(playerId);
         this.removePlayerFromGame(playerId);
