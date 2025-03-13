@@ -10,6 +10,7 @@ export class GameInstance {
     uuid: string
     whitePlayer: Player
     blackPlayer: Player
+    ready: Record<PieceColour, boolean>
     game: ChessGame
     private isGameComplete: boolean = false
 
@@ -17,26 +18,38 @@ export class GameInstance {
         this.uuid = uuid();
         this.whitePlayer = whitePlayer
         this.blackPlayer = blackPlayer
+        this.ready = {
+            [PieceColour.WHITE]: false,
+            [PieceColour.BLACK]: false,
+        }
         this.game = new ChessGame()
         this.initSocketHandlers(PieceColour.WHITE, whitePlayer.socket)
         this.initSocketHandlers(PieceColour.BLACK, whitePlayer.socket)
-        this.handleStart()
+        this.sendFoundEvents()
     }
 
-    handleStart() {
+    sendFoundEvents() {
         this.emitGameFound(this.whitePlayer.socket, PieceColour.WHITE, this.blackPlayer.data);
         this.emitGameFound(this.blackPlayer.socket, PieceColour.BLACK,this.whitePlayer.data);
     }
-    
+
     sendStartEvents() {
         this.emitWaiting(this.blackPlayer.socket);
         this.emitMakeMove(this.whitePlayer.socket);
     }
     
     initSocketHandlers(colour: PieceColour, socket: Socket) {
+        socket.on("gameReady",  () => this.handleGameReady(colour))
         socket.on("makeMove",  (move: Move) => this.handleMove(colour, move))
         socket.on("resign",  () => this.handleResign(colour))
         socket.on("offerDraw",  () => this.handleDrawOffered(colour))
+    }
+
+    handleGameReady(colour: PieceColour) {
+        this.ready[colour] = true;
+        if (this.ready[PieceColour.WHITE] && this.ready[PieceColour.BLACK]) {
+            this.sendStartEvents()
+        }
     }
     
     handleMove(colour: PieceColour, move: Move) {
