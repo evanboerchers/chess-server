@@ -24,7 +24,7 @@ export class GameInstance {
         }
         this.game = new ChessGame()
         this.initSocketHandlers(PieceColour.WHITE, whitePlayer.socket)
-        this.initSocketHandlers(PieceColour.BLACK, whitePlayer.socket)
+        this.initSocketHandlers(PieceColour.BLACK, blackPlayer.socket)
         this.sendFoundEvents()
     }
 
