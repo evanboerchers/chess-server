@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "tsx --watch src/index.ts",
     "test": "vitest",
-    "build": "tsc"
+    "build": "tsc",
+    "prettier": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\""
   },
   "author": "evanboerchers",
   "license": "ISC",
@@ -15,6 +16,7 @@
     "@evanboerchers/chess-core": "1.0.0",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
+    "prettier": "^3.3.3",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "uuid": "^11.0.5"

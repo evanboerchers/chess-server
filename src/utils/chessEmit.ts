@@ -1,1 +1,1 @@
-import { Socket } from "socket.io"
+import { Socket } from "socket.io";
