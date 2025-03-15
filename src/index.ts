@@ -1,3 +1,3 @@
-import { createServer } from './server';
+import { createServer } from "./server";
 
-const server = createServer(3000)
+const server = createServer(3000);
