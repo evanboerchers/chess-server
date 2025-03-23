@@ -162,10 +162,10 @@ export class GameInstance {
     return colour === PieceColour.BLACK ? this.whitePlayer : this.blackPlayer;
   }
 
-  getPlayerColour(playerName: string): PieceColour | null {
-    if (playerName === this.whitePlayer.name) {
+  getPlayerColour(playerId: string): PieceColour | null {
+    if (playerId === this.whitePlayer.id) {
       return PieceColour.WHITE;
-    } else if (playerName === this.blackPlayer.name) {
+    } else if (playerId === this.blackPlayer.id) {
       return PieceColour.BLACK;
     } else {
       return null;

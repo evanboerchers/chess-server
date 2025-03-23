@@ -8,7 +8,10 @@
     "dev": "tsx --watch src/index.ts",
     "test": "vitest",
     "build": "tsc",
-    "prettier": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\""
+    "prettier": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "docker:up": "docker compose -f deploy/docker-compose.yml up -d --build",
+    "docker:down": "docker compose -f deploy/docker-compose.yml down",
+    "docker:restart": "npm run docker:down && npm run docker:up"
   },
   "author": "evanboerchers",
   "license": "ISC",
