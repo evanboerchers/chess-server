@@ -1,13 +1,11 @@
-version: '3.8'
-
 services:
   chess-server:
     build:
-      context: ..
-      dockerfile: deploy/Dockerfile
+      context: .
+      dockerfile: Dockerfile
     container_name: chess-server
     ports:
-      - "3000:3000"
+      - "4050:3000"
     environment:
       - NODE_ENV=production
       - PORT=3000
