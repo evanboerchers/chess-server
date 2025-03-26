@@ -1,0 +1,12 @@
+services:
+  chess-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chess-server
+    ports:
+      - "4050:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    restart: unless-stopped
