@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { v4 as uuid } from "uuid";
-import { GameOutcome, GameOutcomeReason, GameSocket, Player } from "./types";
+import { GameOutcome, GameOutcomeReason, GameSocket, Player } from "../types";
 import { ChessGame, Piece } from "@evanboerchers/chess-core";
 import { Move, PieceColour } from "@evanboerchers/chess-core";
 import gamesService from "./GamesService";

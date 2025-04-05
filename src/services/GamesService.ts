@@ -1,5 +1,5 @@
 import { GameInstance } from "./GameInstance";
-import { GameSocket, Player, PlayerData } from "./types";
+import { GameSocket, Player, PlayerData } from "../types";
 import { v4 as uuidv4 } from "uuid";
 
 export class GamesService {
