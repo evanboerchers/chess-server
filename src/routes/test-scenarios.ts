@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 const router = Router();
-const scenarioDir = path.join(__dirname, '../../data/test-scenarios'); // Adjust based on project structure
+const scenarioDir = path.join(import.meta.dirname , '../../data/test-scenarios'); // Adjust based on project structure
 
 // Ensure the directory exists
 if (!fs.existsSync(scenarioDir)) {
