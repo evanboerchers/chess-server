@@ -12,9 +12,12 @@ import gamesService from "./services/GamesService";
 import { GameServer, Player } from "./types";
 import routes from './routes'
 
-export function createServer(port: number): GameServerInstance {
+export function createServer(port: number, version: string): GameServerInstance {
   const app = express();
   app.use('/api', routes);
+  app.get('/', (_req, res) => {
+    res.json({message: 'this is chess server', version: version})
+  })
   const httpServer = createHttpServer(app);
   const io: GameServer = new Server<
     ClientToServerEvents,
