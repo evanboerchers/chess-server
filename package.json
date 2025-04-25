@@ -5,7 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx --watch src/index.ts",
+    "dev": "tsx watch src/index.ts",
     "test": "vitest",
     "clean": "rimraf dist deploy/dist",
     "prebuild": "rimraf dist deploy/dist",

@@ -20,6 +20,26 @@ router.get('/', (req: Request, res: Response) => {
   }
 });
 
+// GET: List a saved scenario
+router.get('/:fileName', (req: Request, res: Response) => {
+  const filePath = path.join(scenarioDir, req.params.fileName); // Assuming your JSON files are in a 'scenarios' folder
+  
+  try {
+    if (!fs.existsSync(filePath)) {
+      res.status(404).json({ error: `File not found: ${req.params.fileName}` });
+      return
+    }
+
+    const file = fs.readFileSync(filePath, 'utf-8'); 
+    const jsonData = JSON.parse(file); 
+
+    res.json(jsonData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: `Failed to get file: ${req.params.fileName}` });
+  }
+});
+
 // POST: Save a new scenario
 router.post('/', (req: Request, res: Response) => {
   try {
