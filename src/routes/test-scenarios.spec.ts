@@ -5,37 +5,33 @@ import fs from 'fs';
 import path from 'path';
 import scenarioRouter from './test-scenarios'; // Adjust the import path
 
+type Fn = ReturnType<typeof vi.fn>
+
 const app = express();
 app.use(express.json());
 app.use('/scenarios', scenarioRouter);
 
 const testScenarioDir = path.join(__dirname, '../../data/test-scenarios');
 
-// Mock fs module
 vi.mock('fs', async (importOriginal) => {
-  const actualFs: any = await importOriginal(); // Import the actual fs module
+  const actualFs = await importOriginal<typeof import('fs')>(); // Import the actual fs module
   return {
-    ...actualFs, // Keep all actual fs methods
-    existsSync: vi.fn(), // Mock existsSync method
-    readdirSync: vi.fn(), // Mock readdirSync method
-    readFileSync: vi.fn(), // Mock readFileSync method
-    writeFileSync: vi.fn(), // Mock writeFileSync method
+    default: {
+      ...actualFs,
+      existsSync: vi.fn(), 
+      readdirSync: vi.fn(), 
+      readFileSync: vi.fn(),
+      writeFileSync: vi.fn(),
+    }
   };
 });
 
 beforeAll(() => {
-  // Make sure the mock fs works as expected during tests
-  vi.mocked(fs.existsSync).mockReturnValue(true);
-
-  // Mock fs.readdirSync to return Dirent-like objects
-  const dirent1 = { name: 'testScenario1.json', isFile: vi.fn(() => true) } as unknown as fs.Dirent;
-  const dirent2 = { name: 'testScenario2.json', isFile: vi.fn(() => true) } as unknown as fs.Dirent;
-  
-  vi.mocked(fs.readdirSync).mockReturnValue([dirent1, dirent2]);
+  (fs.existsSync as Fn).mockReturnValue(true);
+  (fs.readdirSync as Fn).mockReturnValue(['testScenario1.json', 'testScenario2.json']);
 });
 
 afterAll(() => {
-  // Clear mocks after the tests run
   vi.restoreAllMocks();
 });
 
@@ -48,7 +44,7 @@ describe('Scenario Routes', () => {
   });
 
   it('should return a 404 if scenario is not found', async () => {
-    vi.mocked(fs.existsSync).mockReturnValueOnce(false); // Simulate file not found
+    vi.mocked(fs.existsSync).mockReturnValueOnce(false); 
 
     const response = await request(app).get('/scenarios/nonExistentScenario.json');
     
@@ -88,7 +84,7 @@ describe('Scenario Routes', () => {
   });
 
   it('should return a 400 error if filename or data is missing in POST request', async () => {
-    const invalidData = { filename: 'newScenario' }; // Missing data
+    const invalidData = { filename: 'newScenario' }; 
     const response = await request(app).post('/scenarios').send(invalidData);
 
     expect(response.status).toBe(400);
