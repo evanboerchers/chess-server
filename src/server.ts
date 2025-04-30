@@ -9,11 +9,15 @@ import {
   SocketData,
 } from "./types";
 import gamesService from "./services/GamesService";
-import { GameServer, Player } from "./types";
+import { GameServer } from "./types";
 import routes from './routes'
+import cors from 'cors'
 
 export function createServer(port: number, version: string): GameServerInstance {
   const app = express();
+  app.use(cors({
+    origin: process.env.CORS_ORIGIN
+  }))
   app.use('/api', routes);
   app.get('/', (_req, res) => {
     res.json({message: 'this is chess server', version: version})
@@ -25,7 +29,7 @@ export function createServer(port: number, version: string): GameServerInstance 
     SocketData
   >(httpServer, {
     cors: {
-      origin: "*",
+      origin: process.env.CORS_ORIGIN,
     },
   });
   io.on("connection", (socket: GameSocket) => {

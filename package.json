@@ -5,7 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "dotenv -e .env.development -- tsx watch src/index.ts",
     "test": "vitest",
     "clean": "rimraf dist deploy/dist",
     "prebuild": "rimraf dist deploy/dist",
@@ -20,6 +20,7 @@
   "license": "ISC",
   "dependencies": {
     "@evanboerchers/chess-core": "1.0.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "fs-extra": "^11.3.0",
@@ -29,6 +30,7 @@
     "uuid": "^11.0.5"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.7",
     "@types/socket.io": "^3.0.1",
@@ -36,6 +38,7 @@
     "@types/supertest": "^6.0.2",
     "@types/uuid": "^10.0.0",
     "copyfiles": "^2.4.1",
+    "dotenv-cli": "^8.0.0",
     "rimraf": "^6.0.1",
     "supertest": "^7.0.0",
     "tsup": "^8.4.0",

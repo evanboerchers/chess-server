@@ -43,17 +43,17 @@ router.get('/:fileName', (req: Request, res: Response) => {
 // POST: Save a new scenario
 router.post('/', (req: Request, res: Response) => {
   try {
-    const { filename, data } = req.body;
+    const { name, data } = req.body;
 
-    if (!filename || !data) {
-      res.status(400).json({ error: 'Filename and data are required' });
+    if (!name || !data) {
+      res.status(400).json({ error: 'name and data are required' });
       return;
     }
 
-    const filePath = path.join(scenarioDir, `${filename}.json`);
+    const filePath = path.join(scenarioDir, `${name}.json`);
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 
-    res.status(201).json({ message: `Scenario saved as ${filename}.json` });
+    res.status(201).json({ message: `Scenario saved as ${name}.json` });
   } catch (error) {
     res.status(500).json({ error: 'Failed to save scenario' });
   }

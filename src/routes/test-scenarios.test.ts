@@ -3,7 +3,7 @@ import request from 'supertest';
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
-import scenarioRouter from './test-scenarios'; // Adjust the import path
+import scenarioRouter from './test-scenarios'; 
 
 type Fn = ReturnType<typeof vi.fn>
 
@@ -14,7 +14,7 @@ app.use('/scenarios', scenarioRouter);
 const testScenarioDir = path.join(__dirname, '../../data/test-scenarios');
 
 vi.mock('fs', async (importOriginal) => {
-  const actualFs = await importOriginal<typeof import('fs')>(); // Import the actual fs module
+  const actualFs = await importOriginal<typeof import('fs')>();
   return {
     default: {
       ...actualFs,
@@ -72,7 +72,7 @@ describe('Scenario Routes', () => {
   });
 
   it('should save a new scenario', async () => {
-    const scenarioData = { filename: 'newScenario', data: { name: 'New Scenario', value: 456 } };
+    const scenarioData = { name: 'newScenario', data: { name: 'New Scenario', value: 456 } };
     const response = await request(app).post('/scenarios').send(scenarioData);
 
     expect(response.status).toBe(201);
@@ -83,18 +83,18 @@ describe('Scenario Routes', () => {
     );
   });
 
-  it('should return a 400 error if filename or data is missing in POST request', async () => {
-    const invalidData = { filename: 'newScenario' }; 
+  it('should return a 400 error if name or data is missing in POST request', async () => {
+    const invalidData = { name: 'newScenario' }; 
     const response = await request(app).post('/scenarios').send(invalidData);
 
     expect(response.status).toBe(400);
-    expect(response.body).toEqual({ error: 'Filename and data are required' });
+    expect(response.body).toEqual({ error: 'name and data are required' });
   });
 
   it('should return a 500 error if saving scenario fails', async () => {
     vi.mocked(fs.writeFileSync).mockImplementationOnce(() => { throw new Error('Failed to save file'); });
 
-    const scenarioData = { filename: 'newScenario', data: { name: 'New Scenario', value: 456 } };
+    const scenarioData = { name: 'newScenario', data: { name: 'New Scenario', value: 456 } };
     const response = await request(app).post('/scenarios').send(scenarioData);
 
     expect(response.status).toBe(500);
