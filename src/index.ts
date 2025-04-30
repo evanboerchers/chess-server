@@ -1,7 +1,11 @@
-import { createServer } from "./server";
+import { createServer, ServerOptions } from "./server";
 import pkg from "../package.json"
 import dotenv from 'dotenv'
 
 dotenv.config()
-const version = pkg.version
-const server = createServer(3000, version);
+const serverOptions: ServerOptions = {
+    port: 3000,
+    version: pkg.version,
+    corsOrigin: process.env.CORS_ORIGIN
+}
+const server = createServer(serverOptions);
