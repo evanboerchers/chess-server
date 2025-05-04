@@ -16,14 +16,14 @@ router.get('/', (req: Request, res: Response) => {
     const files = fs.readdirSync(scenarioDir);
     res.json({ scenarios: files });
   } catch (error) {
+    console.log('error')
     res.status(500).json({ error: 'Failed to list scenarios' });
   }
 });
 
 // GET: List a saved scenario
 router.get('/:fileName', (req: Request, res: Response) => {
-  const filePath = path.join(scenarioDir, req.params.fileName); // Assuming your JSON files are in a 'scenarios' folder
-  
+  const filePath = path.join(scenarioDir, req.params.fileName); 
   try {
     if (!fs.existsSync(filePath)) {
       res.status(404).json({ error: `File not found: ${req.params.fileName}` });
@@ -55,6 +55,7 @@ router.post('/', (req: Request, res: Response) => {
 
     res.status(201).json({ message: `Scenario saved as ${name}.json` });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: 'Failed to save scenario' });
   }
 });

@@ -27,6 +27,7 @@ export function createServer(serverOptions: ServerOptions): GameServerInstance {
   } = serverOptions
 
   const app = express();
+  app.use(express.json());
   app.use(cors({
     origin: corsOrigin || false
   }))
