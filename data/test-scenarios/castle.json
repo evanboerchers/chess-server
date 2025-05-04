@@ -1,0 +1,389 @@
+{
+  "board": [
+    [
+      {
+        "colour": "black",
+        "type": "rook"
+      },
+      null,
+      null,
+      null,
+      {
+        "colour": "black",
+        "type": "king"
+      },
+      null,
+      null,
+      {
+        "colour": "black",
+        "type": "rook"
+      }
+    ],
+    [
+      {
+        "colour": "black",
+        "type": "pawn"
+      },
+      {
+        "colour": "black",
+        "type": "pawn"
+      },
+      {
+        "colour": "black",
+        "type": "pawn"
+      },
+      {
+        "colour": "black",
+        "type": "knight"
+      },
+      {
+        "colour": "black",
+        "type": "queen"
+      },
+      {
+        "colour": "black",
+        "type": "pawn"
+      },
+      {
+        "colour": "black",
+        "type": "pawn"
+      },
+      {
+        "colour": "black",
+        "type": "pawn"
+      }
+    ],
+    [
+      null,
+      null,
+      null,
+      {
+        "colour": "black",
+        "type": "pawn"
+      },
+      {
+        "colour": "black",
+        "type": "bishop"
+      },
+      {
+        "colour": "black",
+        "type": "knight"
+      },
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      {
+        "colour": "black",
+        "type": "bishop"
+      },
+      null,
+      {
+        "colour": "black",
+        "type": "pawn"
+      },
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      {
+        "colour": "white",
+        "type": "bishop"
+      },
+      null,
+      {
+        "colour": "white",
+        "type": "pawn"
+      },
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      {
+        "colour": "white",
+        "type": "pawn"
+      },
+      {
+        "colour": "white",
+        "type": "bishop"
+      },
+      {
+        "colour": "white",
+        "type": "knight"
+      },
+      null,
+      null
+    ],
+    [
+      {
+        "colour": "white",
+        "type": "pawn"
+      },
+      {
+        "colour": "white",
+        "type": "pawn"
+      },
+      {
+        "colour": "white",
+        "type": "pawn"
+      },
+      {
+        "colour": "white",
+        "type": "knight"
+      },
+      {
+        "colour": "white",
+        "type": "queen"
+      },
+      {
+        "colour": "white",
+        "type": "pawn"
+      },
+      {
+        "colour": "white",
+        "type": "pawn"
+      },
+      {
+        "colour": "white",
+        "type": "pawn"
+      }
+    ],
+    [
+      {
+        "colour": "white",
+        "type": "rook"
+      },
+      null,
+      null,
+      null,
+      {
+        "colour": "white",
+        "type": "king"
+      },
+      null,
+      null,
+      {
+        "colour": "white",
+        "type": "rook"
+      }
+    ]
+  ],
+  "currentTurn": "white",
+  "castlePrivileges": {
+    "white": {
+      "kingSide": true,
+      "queenSide": true
+    },
+    "black": {
+      "kingSide": true,
+      "queenSide": true
+    }
+  },
+  "moveHistory": [
+    {
+      "piece": {
+        "colour": "white",
+        "type": "pawn"
+      },
+      "from": {
+        "row": 6,
+        "col": 4
+      },
+      "to": {
+        "row": 4,
+        "col": 4
+      }
+    },
+    {
+      "piece": {
+        "colour": "black",
+        "type": "pawn"
+      },
+      "from": {
+        "row": 1,
+        "col": 4
+      },
+      "to": {
+        "row": 3,
+        "col": 4
+      }
+    },
+    {
+      "piece": {
+        "colour": "white",
+        "type": "bishop"
+      },
+      "from": {
+        "row": 7,
+        "col": 5
+      },
+      "to": {
+        "row": 4,
+        "col": 2
+      }
+    },
+    {
+      "piece": {
+        "colour": "black",
+        "type": "bishop"
+      },
+      "from": {
+        "row": 0,
+        "col": 5
+      },
+      "to": {
+        "row": 3,
+        "col": 2
+      }
+    },
+    {
+      "piece": {
+        "colour": "white",
+        "type": "knight"
+      },
+      "from": {
+        "row": 7,
+        "col": 6
+      },
+      "to": {
+        "row": 5,
+        "col": 5
+      }
+    },
+    {
+      "piece": {
+        "colour": "black",
+        "type": "knight"
+      },
+      "from": {
+        "row": 0,
+        "col": 6
+      },
+      "to": {
+        "row": 2,
+        "col": 5
+      }
+    },
+    {
+      "piece": {
+        "colour": "white",
+        "type": "queen"
+      },
+      "from": {
+        "row": 7,
+        "col": 3
+      },
+      "to": {
+        "row": 6,
+        "col": 4
+      }
+    },
+    {
+      "piece": {
+        "colour": "black",
+        "type": "queen"
+      },
+      "from": {
+        "row": 0,
+        "col": 3
+      },
+      "to": {
+        "row": 1,
+        "col": 4
+      }
+    },
+    {
+      "piece": {
+        "colour": "white",
+        "type": "pawn"
+      },
+      "from": {
+        "row": 6,
+        "col": 3
+      },
+      "to": {
+        "row": 5,
+        "col": 3
+      }
+    },
+    {
+      "piece": {
+        "colour": "black",
+        "type": "pawn"
+      },
+      "from": {
+        "row": 1,
+        "col": 3
+      },
+      "to": {
+        "row": 2,
+        "col": 3
+      }
+    },
+    {
+      "piece": {
+        "colour": "white",
+        "type": "bishop"
+      },
+      "from": {
+        "row": 7,
+        "col": 2
+      },
+      "to": {
+        "row": 5,
+        "col": 4
+      }
+    },
+    {
+      "piece": {
+        "colour": "black",
+        "type": "bishop"
+      },
+      "from": {
+        "row": 0,
+        "col": 2
+      },
+      "to": {
+        "row": 2,
+        "col": 4
+      }
+    },
+    {
+      "piece": {
+        "colour": "white",
+        "type": "knight"
+      },
+      "from": {
+        "row": 7,
+        "col": 1
+      },
+      "to": {
+        "row": 6,
+        "col": 3
+      }
+    },
+    {
+      "piece": {
+        "colour": "black",
+        "type": "knight"
+      },
+      "from": {
+        "row": 0,
+        "col": 1
+      },
+      "to": {
+        "row": 1,
+        "col": 3
+      }
+    }
+  ]
+}
